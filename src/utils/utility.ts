@@ -35,6 +35,14 @@ export const vendorSchema = Joi.object().keys({
   
 });
 
+export const updateVendorSchema = Joi.object().keys({
+    name: Joi.string(),
+    coverImage: Joi.string(),
+    address: Joi.string(),
+    phone: Joi.string()
+})
+
+
 export const adminSchema = Joi.object().keys({
   email: Joi.string().email().required(),
   phone: Joi.string().required(),

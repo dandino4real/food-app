@@ -2,9 +2,12 @@ import express from 'express';
 import logger from "morgan";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user"
+import vendorRouter from './routes/vendor';
+
 import {db} from './config/index';
 
 import dotenv from 'dotenv'
+import indexRouter from './routes';
 dotenv.config()
 
 const app = express();
@@ -21,7 +24,9 @@ app.use(logger("dev"));
 app.use(cookieParser());
 
 //Router middleware
+app.use('/', indexRouter)
 app.use('/users', userRouter)
+app.use('/vendor', vendorRouter)
 
 
 
