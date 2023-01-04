@@ -8,6 +8,7 @@ import {db} from './config/index';
 
 import dotenv from 'dotenv'
 import indexRouter from './routes';
+import adminRouter from './routes/admin';
 dotenv.config()
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use('/', indexRouter)
 app.use('/users', userRouter)
 app.use('/vendor', vendorRouter)
+app.use('/admins', adminRouter)
 
 
 
