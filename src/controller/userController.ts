@@ -19,7 +19,6 @@ import { v4 as uuidv4 } from "uuid";
 import { FromAdminMail, userSubject } from "../config";
 import { JwtPayload } from "jsonwebtoken";
 
-
 export const Register = async (req: Request, res: Response) => {
   try {
     const { email, phone, password, confirm_password } = req.body;
@@ -57,33 +56,38 @@ export const Register = async (req: Request, res: Response) => {
         lng: 0,
         lat: 0,
         verified: false,
-        role:"user"
+        role: "user",
       });
 
       //send otp to user
-        await onRequestOTP(otp, phone);
-        let html = emailHtml(otp)
-        await  mailSent( FromAdminMail, email, userSubject, html)
+      // await onRequestOTP(otp, phone);
+
+      //send otp to email
+      let html = emailHtml(otp);
+      console.log(html);
+
+      await mailSent(FromAdminMail, email, userSubject, html);
 
       //check if the admin exist
       const User = (await UserInstance.findOne({
         where: { email: email },
       })) as unknown as UserAttribute;
 
-      
-      //Generate a signature
-      let signature = await GenerateSignature({
-        id: User.id,
-        email: User.email,
-        verified: User.verified,
-      });
+      if (User) {
+        //Generate a signature
+        let signature = await GenerateSignature({
+          id: User.id,
+          email: User.email,
+          verified: User.verified,
+        });
 
-      return res.status(201).json({
-        message:
-          "User created successfully check your email or phone for verification",
-        signature,
-        verified: User.verified,
-      });
+        return res.status(201).json({
+          message:
+            "User created successfully check your email or phone for verification",
+          signature,
+          verified: User.verified,
+        });
+      }
     }
     return res.status(400).json({
       message: "User already exist",
@@ -220,7 +224,14 @@ export const resendOTP = async (req: Request, res: Response) => {
         { where: { email: decode.email } }
       )) as unknown as UserAttribute;
       if (updatedUser) {
-        await onRequestOTP(otp, User.phone);
+
+        const User = (await UserInstance.findOne({
+          where: { email: decode.email },
+        })) as unknown as UserAttribute;
+
+        //send otp to user
+        // await onRequestOTP(otp, User.phone);
+
         //send mail to user
         const html = emailHtml(otp);
         await mailSent(FromAdminMail, User.email, userSubject, html);
@@ -291,7 +302,6 @@ export const getSingleUser = async (req: JwtPayload, res: Response) => {
   }
 };
 
-
 // update user profile
 export const updateUserProfile = async (req: JwtPayload, res: Response) => {
   try {
@@ -345,4 +355,3 @@ export const updateUserProfile = async (req: JwtPayload, res: Response) => {
     });
   }
 };
-

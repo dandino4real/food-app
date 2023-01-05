@@ -1,6 +1,7 @@
 import {accountSid, authToken, fromAdminPhone, GMAIL_PASS,GMAIL_USER, FromAdminMail, userSubject} from '../config'
 import nodemailer from 'nodemailer'
 
+
 export const GenerateOTP = ()=>{
     const otp = Math.floor(1000 + Math.random() * 9000)
     const expiry = new Date()
